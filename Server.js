@@ -2,24 +2,22 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");  // Secure password handling
-const jwt = require("jsonwebtoken"); // Token-based authentication
+const bcrypt = require("bcryptjs");  
+const jwt = require("jsonwebtoken"); 
 const User = require("./Database/User");
+require("dotenv").config();
 
 const app = express();
-const SECRET_KEY = "your_secret_key"; // Use an environment variable for security
-
+const SECRET_KEY = process.env.SECRET_KEY;
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Database Connection
+// console.log(process.env.MONGO_URI);
 mongoose
-  .connect(
-    "mongodb+srv://bhaargav04:2005@cluster04.hvozw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster04",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log("MongoDB Connection Error:", err));
 
