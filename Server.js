@@ -9,17 +9,32 @@ require("dotenv").config();
 
 const app = express();
 const SECRET_KEY = process.env.SECRET_KEY;
+const MONGO_URI = process.env.MONGO_URI;
+
+// Fail fast if env vars are missing - this is where you point to YOUR db
+if (!MONGO_URI) {
+  console.error("ERROR: MONGO_URI is not defined in .env file.");
+  console.error("Copy .env.example to .env and paste your Atlas connection string.");
+  process.exit(1);
+}
+if (!SECRET_KEY) {
+  console.error("ERROR: SECRET_KEY is not defined in .env file.");
+  process.exit(1);
+}
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Database Connection
+// Database Connection - change DB by changing MONGO_URI in .env file
 // console.log(process.env.MONGO_URI);
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log("MongoDB Connection Error:", err));
+  .catch((err) => {
+    console.log("MongoDB Connection Error:", err.message);
+    process.exit(1);
+  });
 
 // Signup Route (Hashes Passwords)
 app.post("/signup", async (req, res) => {
